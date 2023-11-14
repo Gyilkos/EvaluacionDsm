@@ -17,13 +17,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+
 import com.example.evaluaciondsm.databinding.FragmentHomeBinding;
 
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
-    private EditText etCode, etName, etPrice;
+    private EditText etCode, etPrice, etDescription;
     private Button btnRegister, btnSearchP, btnDelete, btnEdit;
     private ArrayList <String> listProducts;
     private ArrayAdapter <String> adapter;
@@ -35,6 +36,12 @@ public class HomeFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        etCode = binding.txtCode;
+        etPrice = binding.txtPrice;
+        etDescription = binding.txtDescription;
+
+
 
         binding.btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +83,26 @@ public class HomeFragment extends Fragment {
     //Metodo para guardar los productos
     public void save() {
 
+        if (binding.txtCode.getText().toString().isEmpty() || binding.txtPrice.getText().toString().isEmpty() || binding.txtDescription.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "Debe llenar todos los campos", Toast.LENGTH_SHORT).show();
+        } /**else {
+            AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(getContext(), "products", null, 1);
+            SQLiteDatabase database = admin.getWritableDatabase();
 
+            ContentValues register = new ContentValues();
+            register.put("code", binding.txtCode.getText().toString());
+            register.put("name", binding.txtPrice.getText().toString());
+            register.put("price", binding.txtDescription.getText().toString());
+
+            database.insert("products", null, register);
+            database.close();
+
+            binding.txtCode.setText("");
+            binding.txtPrice.setText("");
+            binding.txtDescription.setText("");
+
+            Toast.makeText(getContext(), "Producto registrado", Toast.LENGTH_SHORT).show();
+        }*/
     }
 
     //Metodo para buscar productos
