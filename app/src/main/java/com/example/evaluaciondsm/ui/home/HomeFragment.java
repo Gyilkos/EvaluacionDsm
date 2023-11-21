@@ -18,6 +18,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 
+//import com.example.evaluaciondsm.AdminSQLiteOpenHelper;
+import com.example.evaluaciondsm.AdminSQLiteOpenHelper;
 import com.example.evaluaciondsm.databinding.FragmentHomeBinding;
 
 import java.util.ArrayList;
@@ -85,7 +87,7 @@ public class HomeFragment extends Fragment {
 
         if (binding.txtCode.getText().toString().isEmpty() || binding.txtPrice.getText().toString().isEmpty() || binding.txtDescription.getText().toString().isEmpty()) {
             Toast.makeText(getContext(), "Debe llenar todos los campos", Toast.LENGTH_SHORT).show();
-        } /**else {
+        } else {
             AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(getContext(), "products", null, 1);
             SQLiteDatabase database = admin.getWritableDatabase();
 
@@ -102,20 +104,81 @@ public class HomeFragment extends Fragment {
             binding.txtDescription.setText("");
 
             Toast.makeText(getContext(), "Producto registrado", Toast.LENGTH_SHORT).show();
-        }*/
+        }
     }
 
     //Metodo para buscar productos
     public void search() {
+        if(binding.txtCode.getText().toString().isEmpty()){
+            Toast.makeText(getContext(), "Debe ingresar el codigo del producto", Toast.LENGTH_SHORT).show();
+        }else{
+            AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(getContext(), "products", null, 1);
+            SQLiteDatabase database = admin.getWritableDatabase();
 
+            String code = binding.txtCode.getText().toString();
+
+            Cursor row = database.rawQuery("select name, price from products where code = " + code, null);
+
+            if(row.moveToFirst()){
+                binding.txtPrice.setText(row.getString(0));
+                binding.txtDescription.setText(row.getString(1));
+                database.close();
+            }else{
+                Toast.makeText(getContext(), "No existe el producto", Toast.LENGTH_SHORT).show();
+                database.close();
+            }
+
+        }
     }
 
     public void delete() {
 
+        if(binding.txtCode.getText().toString().isEmpty()){
+            Toast.makeText(getContext(), "Debe ingresar el codigo del producto", Toast.LENGTH_SHORT).show();
+        }else{
+            AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(getContext(), "products", null, 1);
+            SQLiteDatabase database = admin.getWritableDatabase();
+
+            String code = binding.txtCode.getText().toString();
+
+            int cant = database.delete("products", "code = " + code, null);
+            database.close();
+
+            binding.txtCode.setText("");
+            binding.txtPrice.setText("");
+            binding.txtDescription.setText("");
+
+            if(cant == 1){
+                Toast.makeText(getContext(), "Producto eliminado", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getContext(), "No existe el producto", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public void edit() {
 
+        if(binding.txtCode.getText().toString().isEmpty()){
+            Toast.makeText(getContext(), "Debe ingresar el codigo del producto", Toast.LENGTH_SHORT).show();
+        }else{
+            AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(getContext(), "products", null, 1);
+            SQLiteDatabase database = admin.getWritableDatabase();
+
+            String code = binding.txtCode.getText().toString();
+            ContentValues register = new ContentValues();
+            register.put("code", binding.txtCode.getText().toString());
+            register.put("name", binding.txtPrice.getText().toString());
+            register.put("price", binding.txtDescription.getText().toString());
+
+            int cant = database.update("products", register, "code = " + code, null);
+            database.close();
+
+            if(cant == 1){
+                Toast.makeText(getContext(), "Producto modificado", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getContext(), "No existe el producto", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public void cleanForm() {
